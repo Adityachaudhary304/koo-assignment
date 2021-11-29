@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:text="Post Body"
             android:padding="5dp"
-            android:textColor="@color/black"
+            android:textColor="#9F000000"
             android:textSize="16sp" />
         
         <Space

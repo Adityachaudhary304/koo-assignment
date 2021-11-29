@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.adapters.AbsListViewBindingAdapter
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +17,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mViewModel: PostViewModel
     private lateinit var mRecyclerAdapter: PostRecyclerAdapter
     private lateinit var binding: ActivityMainBinding
-//    private val retrofit = RetrofitClient.getApiClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +25,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         Toast.makeText(this,"Hello",Toast.LENGTH_LONG).show()
         mViewModel = ViewModelProvider(this,ViewModelFactory()).get(PostViewModel::class.java)
-        //val apiData:JsonReturnModel = viewModel.fetchPostData()
-        //binding.recyclerView.adapter = adapter
 
         initRecyclerView()
         initViewModel()
@@ -52,15 +48,11 @@ class MainActivity : AppCompatActivity() {
     {
         mViewModel.postModelListLiveData?.observe(this, {
             Log.d(TAG, "initViewModel: observed")
-            /*if(mViewModel.postModelListLiveData!!.value!!.meta!!.pagination!!.page!! < mViewModel!!.postModelListLiveData!!.value!!.meta!!.pagination!!.pages!!)
-            {
-                mViewModel.pageNo += 1
-                Log.d("viewModel", "fetchPostData: ${mViewModel.pageNo}")
-            }*/
             if (it != null) {
                 Log.d("viewmodel", "onCreate: $it")
-                if(mViewModel.pageNo > 1) {
+                if(mViewModel.pageNo > 1 &&mViewModel.pageNo <= it.meta!!.pagination!!.pages!!) {
                     var c = mRecyclerAdapter.itemCount
+                    Log.e(TAG, "initViewModel: ${binding.postRecyclerView.adapter}" )
                     mRecyclerAdapter.addDataItems(it)
                     mRecyclerAdapter.notifyItemRangeInserted(c ,it.data!!.size)
                 }
@@ -69,11 +61,9 @@ class MainActivity : AppCompatActivity() {
                     mRecyclerAdapter.notifyDataSetChanged()
                 }
             } else {
-                Toast.makeText(this, "Bhakk", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "NO Data returned", Toast.LENGTH_LONG).show()
             }
         })
-        Log.d(TAG, "initViewModel: line50")
-        //mViewModel.fetchPostData()
         mViewModel.fetchPosts()
     }
 }
